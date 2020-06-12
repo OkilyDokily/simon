@@ -35,56 +35,27 @@ let brighten = function(color){
   }
 };
 
-
-
-
-
 let simon = new Simon();
 
 
 $(document).ready(function(){
 
-  $("body").on("click","div",)
-
-  $("#red").click(function(){
-    currentTestColorNumber++;
-    if(simon.matchesPosition(currentTestColorNumber,"red")){ 
-      requestAnimationFrame(red);
-    }
-    else{
-      console.log("game over")
-    }
-  });
-
-  $("#green").click(function(){
-    currentTestColorNumber++;
-    if(simon.matchesPosition(currentTestColorNumber,"green")){ 
-      requestAnimationFrame(green);
-    }
-    else{
-      console.log("game over")
-    }
-  });
-
-  $("#yellow").click(function(){
-    if(simon.matchesPosition(currentTestColorNumber,"yellow")){ 
+  $("body").on("click","div",function(){
+      let color = $(this).attr("id");
       currentTestColorNumber++;
-      requestAnimationFrame(yellow);
-    }
-    else{
-      console.log("game over")
-    }
-  });
+      if(simon.matchesPosition(currentTestColorNumber,color)){ 
+        requestAnimationFrame(function(){
+          brighten(color);
+        });
+      }
+      else{
+        console.log("game over")
+      }
+    });
+  })
 
-  $("#blue").click(function(){
-    if(simon.matchesPosition(currentTestColorNumber,"blue")){ 
-      currentTestColorNumber++;
-      requestAnimationFrame(blue);
-    }
-    else{
-      console.log("game over")
-    }
-  });
+
+
 
   $("button").click(function(){ 
     simon.createRandomColor();
