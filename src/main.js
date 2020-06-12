@@ -1,11 +1,12 @@
-import $ from 'jquery';
+//import $ from 'jquery';
 import 'bootstrap';
 import { Simon, Game } from './simon.js';
 import './styles.css';
 
-
+let simon = new Simon();
+let game = new Game();
 let colors;
-
+let currentTestColorNumber;
 let darkColors = {
   "red": "rgb(155, 17, 17)",
   "green":"rgb(12, 83, 12)",
@@ -13,13 +14,14 @@ let darkColors = {
   "blue": "rgb(8, 8, 92)"
 }
 
-let currentTestColorNumber;
+
 
 let brightenNumber = 0;
 let brighten = function(color){
   brightenNumber++;
   $("#" + color).css("background-color", color);
-  if (brightenNumber < 40){
+  let brightenNumberLimit = (game.currentPlayer === "computer") ? 40 : 5
+  if (brightenNumber < brightenNumberLimit){
     requestAnimationFrame(function(){
       brighten(color);
     });
@@ -32,31 +34,35 @@ let brighten = function(color){
         brighten(colors.shift());
       });
     }
-    else{
+    else if (game.currentPlayer === "computer"){
       game.changePlayer(); 
     }
   }
 };
 
-let simon = new Simon();
-let game = new Game();
+
 
 $(document).ready(function(){
 
   $("body").on("click","div",function(){
+
     if(game.currentPlayer === "user"){
+    
       let color = $(this).attr("id");
-      currentTestColorNumber++;
-      if(currentTestColorNumber > simon.colorSequence.length - 1){
+      
+      if(currentTestColorNumber === simon.colorSequence.length - 1){
         simon.createRandomColor();
         game.changePlayer();
-        colors = simon.colorSequence;
+        currentTestColorNumber = 0;
+        colors = [...simon.colorSequence];
         requestAnimationFrame(function(){
           brighten(colors.shift());
         })
+        
         return;
       }
       if(simon.matchesPosition(currentTestColorNumber,color)){ 
+        currentTestColorNumber++;
         requestAnimationFrame(function(){
           brighten(color);
         });
@@ -64,19 +70,30 @@ $(document).ready(function(){
       else{
         console.log("game over")
       }
-    }   
+    }  
+    
+    
   });
 
-  $("button").click(function(){ 
+  $("button").click(function(){
+    resetValues(); 
     simon.createRandomColor();
-    colors = simon.colorSequence;
+    colors = [...simon.colorSequence];
     
     currentTestColorNumber = 0;
     requestAnimationFrame(function(){
       brighten(colors.shift())
     });
   });
-  })
+
+})
+
+function resetValues(){
+  simon.reset();
+  game.reset();
+}
+
+
 
   
 

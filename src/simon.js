@@ -10,7 +10,9 @@ export class Simon {
   matchesPosition(num, color){
     return this.colorSequence[num] === color;
   }
-
+  reset(){
+    this.colorSequence = [];
+  }
 }
 
 export class Game {
@@ -19,10 +21,14 @@ export class Game {
   }
   changePlayer(){
     if(this.currentPlayer === "computer"){
-      this.changePlayer = "user";
+      this.currentPlayer = "user";
     }
     else{
       this.currentPlayer = "computer";
     }
+  }
+
+  reset(){
+    this.currentPlayer = "computer"
   }
 }
