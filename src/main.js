@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import 'bootstrap';
-import { Simon } from './simon.js';
+import { Simon, Game } from './simon.js';
 import './styles.css';
 
 
@@ -19,7 +19,7 @@ let brightenNumber = 0;
 let brighten = function(color){
   brightenNumber++;
   $("#" + color).css("background-color", color);
-  if (redNumber < 40){
+  if (brightenNumber < 40){
     requestAnimationFrame(function(){
       brighten(color);
     });
@@ -32,17 +32,30 @@ let brighten = function(color){
         brighten(colors.shift());
       });
     }
+    else{
+      game.changePlayer(); 
+    }
   }
 };
 
 let simon = new Simon();
-
+let game = new Game();
 
 $(document).ready(function(){
 
   $("body").on("click","div",function(){
+    if(game.currentPlayer === "user"){
       let color = $(this).attr("id");
       currentTestColorNumber++;
+      if(currentTestColorNumber > simon.colorSequence.length - 1){
+        simon.createRandomColor();
+        game.changePlayer();
+        colors = simon.colorSequence;
+        requestAnimationFrame(function(){
+          brighten(colors.shift());
+        })
+        return;
+      }
       if(simon.matchesPosition(currentTestColorNumber,color)){ 
         requestAnimationFrame(function(){
           brighten(color);
@@ -51,17 +64,22 @@ $(document).ready(function(){
       else{
         console.log("game over")
       }
-    });
-  })
-
-
-
+    }   
+  });
 
   $("button").click(function(){ 
     simon.createRandomColor();
     colors = simon.colorSequence;
-   
+    
     currentTestColorNumber = 0;
-    requestAnimationFrame(colorFunctionObject[colors.shift()]);
+    requestAnimationFrame(function(){
+      brighten(colors.shift())
+    });
   });
-});
+  })
+
+  
+
+ 
+
+

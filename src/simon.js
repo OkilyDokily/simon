@@ -12,3 +12,17 @@ export class Simon {
   }
 
 }
+
+export class Game {
+  constructor(){
+    this.currentPlayer = "computer";
+  }
+  changePlayer(){
+    if(this.currentPlayer === "computer"){
+      this.changePlayer = "user";
+    }
+    else{
+      this.currentPlayer = "computer";
+    }
+  }
+}
