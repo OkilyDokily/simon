@@ -1,96 +1,100 @@
-//import $ from 'jquery';
+import $ from 'jquery';
 import 'bootstrap';
+
 import { Simon, Game } from './simon.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 let simon = new Simon();
 let game = new Game();
-let colors;
-let currentTestColorNumber;
+let colors = [];
+
 let darkColors = {
   "red": "rgb(155, 17, 17)",
   "green":"rgb(12, 83, 12)",
   "yellow":"rgb(114, 114, 5)",
   "blue": "rgb(8, 8, 92)"
-}
-
-
-
-let brightenNumber = 0;
-let brighten = function(color){
-  brightenNumber++;
-  $("#" + color).css("background-color", color);
-  let brightenNumberLimit = (game.currentPlayer === "computer") ? 40 : 5
-  if (brightenNumber < brightenNumberLimit){
-    requestAnimationFrame(function(){
-      brighten(color);
-    });
-  }
-  else{
-    $("#" + color).css("background-color", darkColors[color]);
-    brightenNumber = 0;
-    if(colors.length > 0){
-      requestAnimationFrame(function(){
-        brighten(colors.shift());
-      });
-    }
-    else if (game.currentPlayer === "computer"){
-      game.changePlayer(); 
-    }
-  }
 };
 
+
+let brighten = function(color){
+  let brightenNumber = 0;
+  inner(color);
+  function inner(color){
+    brightenNumber++;
+    $("#" + color).css("background-color", color);
+   
+    if (brightenNumber < 40){
+      requestAnimationFrame(function(){
+        inner(color);
+      });
+    }
+    else{
+      $("#" + color).css("background-color", darkColors[color]);
+      brightenNumber = 0;
+      if(colors.length > 0){
+        requestAnimationFrame(function(){
+          setTimeout(function(){
+            inner(colors.shift());
+          },500);  
+        });
+      }
+      else if (game.currentPlayer === "computer"){
+        game.currentPlayer = "user";
+      }
+    }
+  } 
+};
 
 
 $(document).ready(function(){
 
-  $("body").on("click","div",function(){
+  $("#colors").on("click","div",function(){
 
     if(game.currentPlayer === "user"){
-    
+      game.takeTurn();
       let color = $(this).attr("id");
       
-      if(currentTestColorNumber === simon.colorSequence.length - 1){
-        simon.createRandomColor();
-        game.changePlayer();
-        currentTestColorNumber = 0;
-        colors = [...simon.colorSequence];
-        requestAnimationFrame(function(){
-          brighten(colors.shift());
-        })
-        
-        return;
-      }
-      if(simon.matchesPosition(currentTestColorNumber,color)){ 
-        currentTestColorNumber++;
-        requestAnimationFrame(function(){
-          brighten(color);
-        });
+      if(simon.matchesPosition(game.numberOfColorsClicked,color)){ 
+        $("#" + color).css("background-color", color);
+        setTimeout(function(){
+          $("#"+color).css("background-color",darkColors[color]);
+        },400);
       }
       else{
-        console.log("game over")
+        $("#gameover span").text(simon.colorSequence.length - 1);
+        $("#gameover").show();
+        return;
+      }
+      if(game.numberOfColorsClicked === simon.colorSequence.length){
+        simon.createRandomColor();
+        game.reset();
+        colors = [...simon.colorSequence];
+        setTimeout(function(){
+          brighten(colors.shift());
+        },1000);
+        return;
       }
     }  
-    
-    
   });
 
   $("button").click(function(){
-    resetValues(); 
+    cleanUp();
     simon.createRandomColor();
     colors = [...simon.colorSequence];
-    
-    currentTestColorNumber = 0;
-    requestAnimationFrame(function(){
-      brighten(colors.shift())
-    });
+    brighten(colors.shift())  ;
   });
 
-})
+});
 
 function resetValues(){
   simon.reset();
   game.reset();
+}
+
+function cleanUp(){
+  $("#gameover").hide();
+  resetValues();
 }
 
 

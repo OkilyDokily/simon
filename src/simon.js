@@ -3,12 +3,12 @@ let colorArray = ['red','green','yellow','blue'];
 export class Simon {
   constructor(){
     this.colorSequence = [];
-  };
+  }
   createRandomColor(){
     this.colorSequence.push(colorArray[Math.floor(Math.random() * 4)]);
   }
   matchesPosition(num, color){
-    return this.colorSequence[num] === color;
+    return this.colorSequence[num - 1] === color;
   }
   reset(){
     this.colorSequence = [];
@@ -18,6 +18,7 @@ export class Simon {
 export class Game {
   constructor(){
     this.currentPlayer = "computer";
+    this.numberOfColorsClicked = 0;
   }
   changePlayer(){
     if(this.currentPlayer === "computer"){
@@ -29,6 +30,15 @@ export class Game {
   }
 
   reset(){
-    this.currentPlayer = "computer"
+    this.resetTurns();
+    this.currentPlayer = "computer";
+  }
+
+  takeTurn(){
+    this.numberOfColorsClicked++;
+  }
+
+  resetTurns(){
+    this.numberOfColorsClicked = 0;
   }
 }

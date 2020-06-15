@@ -1,7 +1,7 @@
-div{
+div#colors div{
   width: 100px;
   height: 200px;
-  float:left;
+  display: inline-block;
 }
 
 #red{
@@ -18,4 +18,19 @@ div{
 
 #blue{
   background-color:rgb(8, 8, 92);
+}
+
+body {
+  width: 33%;
+  margin: auto;
+  margin-top: 50px;
+  background-color: bisque;
+}
+
+button{
+  display: block;
+}
+
+#gameover{
+  display: none;
 }
